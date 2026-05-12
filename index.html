@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ديف ستور — خدمات تطوير المواقع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#0a0e1a;color:#e8eaf0;min-height:100vh;direction:rtl}
+:root{
+  --blue:#1e90ff;--blue-dark:#1565c0;--blue-glow:rgba(30,144,255,0.15);
+  --black:#0a0e1a;--card:#111827;--card2:#1a2235;
+  --border:rgba(30,144,255,0.25);--text:#e8eaf0;--muted:#8892a4;
+  --success:#22c55e;--danger:#ef4444;--warning:#f59e0b;
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0e1a}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.page{display:none;flex-direction:column;min-height:100vh}
+.page.active{display:flex}
+nav{background:rgba(10,14,26,0.97);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.3rem;color:#fff;text-decoration:none}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--blue-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;transition:all .2s}
+.nav-btn:hover,.nav-btn.active-nav{background:var(--blue);border-color:var(--blue);color:#fff}
+.cart-btn{position:relative;background:var(--blue);border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:600;transition:opacity .2s}
+.cart-btn:hover{opacity:0.85}
+.cart-badge{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.admin-btn{background:rgba(30,144,255,0.1);border:1px solid var(--border);color:var(--blue);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.85rem;transition:all .2s}
+.admin-btn:hover{background:rgba(30,144,255,0.2)}
+.hero{text-align:center;padding:5rem 2rem 3rem;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(30,144,255,0.12) 0%,transparent 70%)}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:1rem}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:500px;margin:0 auto 2rem}
+.hero-stats{display:flex;justify-content:center;gap:3rem;margin-top:1rem}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:1.8rem;font-weight:900;color:var(--blue)}
+.hero-stat-label{font-size:0.85rem;color:var(--muted)}
+.products-section{padding:2rem;max-width:1200px;margin:0 auto;width:100%}
+.section-title{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:1.5rem;display:flex;align-items:center;gap:12px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s;display:flex;flex-direction:column}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 12px 40px rgba(30,144,255,0.18);border-color:rgba(30,144,255,0.5)}
+.prod-img{width:100%;height:160px;object-fit:cover;display:block}
+.prod-header{padding:1.5rem 1.5rem 0;display:flex;align-items:flex-start;gap:12px}
+.prod-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.prod-meta{flex:1}
+.prod-name{font-weight:700;font-size:1.05rem;color:#fff;margin-top:2px}
+.prod-body{padding:1rem 1.5rem;flex:1}
+.prod-desc{color:var(--muted);font-size:0.88rem;line-height:1.7}
+.prod-footer{padding:1rem 1.5rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.05);margin-top:auto}
+.prod-price{font-weight:900;font-size:1.2rem;color:var(--blue)}
+.add-cart-btn{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border:none;color:#fff;padding:9px 20px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:600;transition:all .2s;white-space:nowrap}
+.add-cart-btn:hover{opacity:0.88;transform:scale(1.04)}
+.add-cart-btn.added{background:var(--success)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;margin-bottom:6px}
+.tag-new{background:rgba(34,197,94,0.15);color:#22c55e}
+.tag-hot{background:rgba(239,68,68,0.15);color:#ef4444}
+.tag-pro{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.tag-best{background:rgba(245,158,11,0.15);color:#f59e0b}
+.icon-blue{background:rgba(30,144,255,0.15);color:#1e90ff}
+.icon-green{background:rgba(34,197,94,0.15);color:#22c55e}
+.icon-yellow{background:rgba(245,158,11,0.15);color:#f59e0b}
+.icon-pink{background:rgba(236,72,153,0.15);color:#ec4899}
+.icon-purple{background:rgba(139,92,246,0.15);color:#8b5cf6}
+.icon-teal{background:rgba(20,184,166,0.15);color:#14b8a6}
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:flex-start;justify-content:flex-start}
+.cart-overlay.open{display:flex}
+.cart-panel{background:var(--card);width:360px;height:100vh;overflow-y:auto;border-left:1px solid var(--border);padding:1.5rem;display:flex;flex-direction:column;gap:1rem;animation:slideIn .22s ease}
+@keyframes slideIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+.cart-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:1rem}
+.cart-header h3{font-weight:700;color:#fff;font-size:1.1rem}
+.close-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.8rem;line-height:1;transition:color .2s}
+.close-btn:hover{color:#fff}
+.cart-item{background:var(--card2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;border:1px solid transparent;transition:border-color .2s}
+.cart-item:hover{border-color:var(--border)}
+.cart-item-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:0.9rem;font-weight:600;color:#fff}
+.cart-item-price{font-size:0.82rem;color:var(--blue);margin-top:2px}
+.remove-item{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;transition:color .2s}
+.remove-item:hover{color:var(--danger)}
+.cart-divider{height:1px;background:var(--border);margin:0}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.cart-total-label{color:var(--muted);font-size:0.9rem}
+.cart-total-val{color:var(--blue);font-weight:800;font-size:1.05rem}
+.checkout-btn{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border:none;color:#fff;padding:14px;border-radius:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;width:100%;transition:opacity .2s;margin-top:auto}
+.checkout-btn:hover{opacity:0.88}
+.empty-cart{text-align:center;color:var(--muted);padding:3rem 1rem;font-size:0.95rem;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem}
+.empty-cart-icon{font-size:3rem;opacity:0.4}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:540px;padding:2rem;max-height:90vh;overflow-y:auto;animation:fadeUp .2s ease}
+.edit-modal{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:480px;padding:2rem;max-height:90vh;overflow-y:auto;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-header h2{font-weight:800;font-size:1.3rem;color:#fff;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:1.1rem}
+.form-group label{display:block;font-size:0.88rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:0.95rem;outline:none;transition:border .2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,144,255,0.1)}
+.form-group textarea{min-height:85px;resize:vertical}
+.error-msg{color:var(--danger);font-size:0.82rem;margin-top:5px;display:none;font-weight:500}
+.submit-btn{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border:none;color:#fff;padding:13px 24px;border-radius:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;width:100%;transition:opacity .2s;margin-top:0.5rem}
+.submit-btn:hover{opacity:0.88}
+.cancel-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:11px 20px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;width:100%;margin-top:8px;transition:all .2s}
+.cancel-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.success-box{text-align:center;padding:2rem}
+.success-box .success-icon{font-size:4rem;margin-bottom:1rem}
+.success-box h3{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:0.5rem}
+.success-box p{color:var(--muted);font-size:0.92rem}
+.checkout-summary{background:var(--card2);border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border)}
+.checkout-summary-title{font-size:0.82rem;color:var(--muted);margin-bottom:8px;font-weight:600}
+.checkout-item-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.88rem;color:#fff}
+.orders-page{padding:2rem;max-width:900px;margin:0 auto;width:100%}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;transition:border-color .2s}
+.order-card:hover{border-color:rgba(30,144,255,0.4)}
+.order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.order-id{font-weight:800;font-size:1rem;color:#fff}
+.order-date{font-size:0.8rem;color:var(--muted)}
+.order-status{display:inline-block;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;background:rgba(30,144,255,0.15);color:var(--blue)}
+.order-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.order-field{background:var(--card2);border-radius:8px;padding:10px 12px}
+.order-field-label{font-size:0.75rem;color:var(--muted);margin-bottom:3px}
+.order-field-val{font-size:0.88rem;color:#fff;font-weight:500}
+.order-products{grid-column:1/-1}
+.empty-orders{text-align:center;padding:5rem 2rem;color:var(--muted)}
+.empty-orders-icon{font-size:4rem;opacity:0.3;margin-bottom:1rem}
+.admin-login-page{background:var(--black);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:400px}
+.login-box-icon{text-align:center;font-size:3rem;margin-bottom:1rem}
+.login-box h2{text-align:center;font-weight:800;color:#fff;margin-bottom:0.4rem;font-size:1.4rem}
+.login-box p{text-align:center;color:var(--muted);font-size:0.9rem;margin-bottom:1.8rem}
+.login-err{color:var(--danger);font-size:0.85rem;text-align:center;margin-top:8px;display:none;font-weight:500}
+.admin-panel{background:var(--black);min-height:100vh}
+.admin-body{padding:2rem;max-width:1100px;margin:0 auto}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.admin-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem}
+.admin-card h3{font-weight:700;color:var(--blue);font-size:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.full-width{grid-column:1/-1}
+.stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.9rem}
+.stat-row:last-child{border-bottom:none}
+.stat-val{color:var(--blue);font-weight:700}
+.prod-admin-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.prod-admin-row:last-child{border-bottom:none}
+.prod-admin-info{flex:1}
+.prod-admin-name{font-size:0.88rem;color:#fff}
+.prod-admin-price{font-size:0.82rem;color:var(--blue);margin-top:2px}
+.prod-admin-actions{display:flex;gap:6px}
+.edit-btn{background:rgba(30,144,255,0.1);border:1px solid rgba(30,144,255,0.3);color:var(--blue);width:32px;height:32px;border-radius:7px;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.edit-btn:hover{background:rgba(30,144,255,0.25)}
+.del-btn{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#ef4444;width:32px;height:32px;border-radius:7px;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.del-btn:hover{background:rgba(239,68,68,0.2)}
+.add-prod-form{margin-top:1.2rem;background:var(--card2);border-radius:12px;padding:1.2rem}
+.add-prod-form-title{font-size:0.92rem;font-weight:700;color:#fff;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:0.9rem;outline:none;width:100%;transition:border .2s}
+.form-input:focus{border-color:var(--blue)}
+.form-select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:0.9rem;outline:none;width:100%}
+.add-prod-btn{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border:none;color:#fff;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.95rem;font-weight:700;width:100%;transition:opacity .2s}
+.add-prod-btn:hover{opacity:0.88}
+.img-upload-area{border:2px dashed var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:10px;position:relative;overflow:hidden}
+.img-upload-area:hover{border-color:var(--blue)}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-text{color:var(--muted);font-size:0.85rem}
+.img-preview-small{width:70px;height:70px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid var(--border)}
+.admin-order-card{background:var(--card2);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid transparent;transition:border-color .2s}
+.admin-order-card:hover{border-color:var(--border)}
+.admin-order-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.admin-order-name{font-weight:700;color:#fff;font-size:0.92rem;margin-bottom:4px}
+.admin-order-meta{font-size:0.8rem;color:var(--muted);margin-top:3px}
+.admin-order-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;background:rgba(30,144,255,0.15);color:var(--blue);margin-top:5px}
+.admin-del-order-btn{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:0.8rem;font-family:'Tajawal',sans-serif;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.admin-del-order-btn:hover{background:rgba(239,68,68,0.25)}
+.orders-scroll{max-height:360px;overflow-y:auto}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;transition:all .2s}
+.back-btn:hover{border-color:rgba(255,255,255,0.3);color:#fff}
+@media(max-width:600px){
+  nav{padding:0 1rem;gap:8px}
+  .nav-links{gap:5px}
+  .nav-btn{padding:6px 10px;font-size:0.82rem}
+  .admin-grid{grid-template-columns:1fr}
+  .order-grid{grid-template-columns:1fr}
+  .products-grid{grid-template-columns:1fr}
+  .hero{padding:3rem 1rem 2rem}
+  .hero-stats{gap:1.5rem}
+  .cart-panel{width:95vw}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- STORE PAGE -->
+<div class="page active" id="page-store">
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span>K<span style="color:var(--blue)">BAB</span></span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active-nav" onclick="showSection('store',this)">🏠 المنتجات</button>
+      <button class="nav-btn" onclick="showSection('orders',this)">📋 طلباتي</button>
+      <button class="admin-btn" onclick="showPage('page-admin-login')">🔒 الإدارة</button>
+      <button class="cart-btn" onclick="toggleCart()">
+        🛒 السلة
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="section-store">
+    <div class="hero">
+      <h1>أفضل خدمات<br><span>تطوير المواقع</span></h1>
+      <p>نقدم لك حلولاً احترافية متكاملة لإنشاء موقعك الإلكتروني بأعلى جودة وأسرع وقت</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">+50</div><div class="hero-stat-label">مشروع منجز</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-label">رضا العملاء</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-label">دعم فني</div></div>
+      </div>
+    </div>
+    <div class="products-section">
+      <div class="section-title">🚀 منتجاتنا</div>
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </div>
+
+  <div id="section-orders" class="orders-page" style="display:none">
+    <div class="section-title" style="font-size:1.4rem;margin-bottom:1.5rem">📋 سجل الطلبات</div>
+    <div id="ordersListMain">
+      <div class="empty-orders">
+        <div class="empty-orders-icon">📭</div>
+        <div>لا توجد طلبات حتى الآن</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN PAGE -->
+<div class="page" id="page-admin-login">
+  <div class="admin-login-page">
+    <div class="login-box">
+      <div class="login-box-icon">🔐</div>
+      <h2>لوحة الإدارة</h2>
+      <p>أدخل كلمة المرور للوصول إلى لوحة التحكم الكاملة</p>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="adminPassInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkAdmin()">
+      </div>
+      <div class="login-err" id="loginErr">❌ كلمة المرور غير صحيحة</div>
+      <button class="submit-btn" onclick="checkAdmin()">دخول →</button>
+      <button class="cancel-btn" onclick="showPage('page-store')">رجوع للمتجر</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL PAGE -->
+<div class="page" id="page-admin">
+  <div class="admin-panel">
+    <nav>
+      <div class="logo">
+        <div class="logo-icon">⚙️</div>
+        <span>لوحة <span style="color:var(--blue)">التحكم</span></span>
+      </div>
+      <div class="nav-links">
+        <button class="back-btn" onclick="showPage('page-store')">← العودة للمتجر</button>
+      </div>
+    </nav>
+    <div class="admin-body">
+      <div class="admin-grid">
+
+        <div class="admin-card">
+          <h3>📊 إحصائيات المتجر</h3>
+          <div class="stat-row"><span>عدد المنتجات</span><span class="stat-val" id="statProds">6</span></div>
+          <div class="stat-row"><span>عدد الطلبات</span><span class="stat-val" id="statOrders">0</span></div>
+          <div class="stat-row"><span>آخر طلب من</span><span class="stat-val" id="statLast">—</span></div>
+          <div class="stat-row"><span>كلمة المرور</span><span class="stat-val">KBAB</span></div>
+        </div>
+
+        <div class="admin-card">
+          <h3>📋 الطلبات الواردة</h3>
+          <div class="orders-scroll" id="adminOrdersList">
+            <div style="color:var(--muted);font-size:0.88rem;padding:0.5rem 0">لا توجد طلبات بعد</div>
+          </div>
+        </div>
+
+        <div class="admin-card full-width">
+          <h3>🛍️ إدارة المنتجات</h3>
+          <div id="adminProdsList"></div>
+          <div class="add-prod-form">
+            <div class="add-prod-form-title">➕ إضافة منتج جديد</div>
+            <div class="form-row">
+              <input type="text" class="form-input" id="newProdName" placeholder="اسم المنتج *">
+              <input type="text" class="form-input" id="newProdPrice" placeholder="السعر (مثال: 500 ريال) *">
+            </div>
+            <textarea class="form-input" id="newProdDesc" placeholder="وصف المنتج..." rows="2" style="margin-bottom:10px"></textarea>
+            <div class="form-row">
+              <input type="text" class="form-input" id="newProdIcon" placeholder="أيقونة إيموجي (مثال: 🌐)">
+              <select class="form-select" id="newProdBadge">
+                <option value="">بدون تصنيف</option>
+                <option value="جديد|tag-new">جديد</option>
+                <option value="الأكثر طلباً|tag-hot">الأكثر طلباً</option>
+                <option value="احترافي|tag-pro">احترافي</option>
+                <option value="مميز|tag-best">مميز</option>
+              </select>
+            </div>
+            <div class="img-upload-area">
+              <input type="file" accept="image/*" id="newProdImgFile" onchange="previewNewImage(this)">
+              <div class="img-upload-text">📷 اضغط لرفع صورة للمنتج (اختياري)</div>
+              <img id="newProdImgPreview" class="img-preview-small" style="display:none">
+            </div>
+            <button class="add-prod-btn" onclick="addProduct()">إضافة المنتج +</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="modal-bg" id="editProdModal">
+  <div class="edit-modal">
+    <div class="modal-header">
+      <h2>✏️ تعديل المنتج</h2>
+      <button class="close-btn" onclick="closeModal('editProdModal')">×</button>
+    </div>
+    <input type="hidden" id="editProdId">
+    <div class="form-group">
+      <label>اسم المنتج</label>
+      <input type="text" class="form-input" id="editProdName" style="background:var(--card2)">
+    </div>
+    <div class="form-group">
+      <label>السعر</label>
+      <input type="text" class="form-input" id="editProdPrice" style="background:var(--card2)">
+    </div>
+    <div class="form-group">
+      <label>الوصف</label>
+      <textarea class="form-input" id="editProdDesc" rows="3" style="background:var(--card2)"></textarea>
+    </div>
+    <div class="form-group">
+      <label>الأيقونة (إيموجي)</label>
+      <input type="text" class="form-input" id="editProdIcon" style="background:var(--card2)">
+    </div>
+    <div class="form-group">
+      <label>التصنيف</label>
+      <select class="form-select" id="editProdBadge" style="background:var(--card2)">
+        <option value="">بدون تصنيف</option>
+        <option value="جديد|tag-new">جديد</option>
+        <option value="الأكثر طلباً|tag-hot">الأكثر طلباً</option>
+        <option value="احترافي|tag-pro">احترافي</option>
+        <option value="مميز|tag-best">مميز</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>صورة المنتج</label>
+      <div class="img-upload-area">
+        <input type="file" accept="image/*" id="editProdImgFile" onchange="previewEditImage(this)">
+        <div class="img-upload-text">📷 اضغط لرفع صورة جديدة أو تغييرها</div>
+        <img id="editProdImgPreview" class="img-preview-small" style="display:none">
+      </div>
+    </div>
+    <button class="submit-btn" onclick="saveEditProduct()">💾 حفظ التعديلات</button>
+    <button class="cancel-btn" onclick="closeModal('editProdModal')">إلغاء</button>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartOutside(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>🛒 سلة المشتريات</h3>
+      <button class="close-btn" onclick="toggleCart()">×</button>
+    </div>
+    <div id="cartItems">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <div>السلة فارغة حالياً</div>
+      </div>
+    </div>
+    <div id="cartFooter" style="display:none;flex-direction:column;gap:10px">
+      <div class="cart-divider"></div>
+      <div class="cart-total-row">
+        <span class="cart-total-label">إجمالي المنتجات</span>
+        <span class="cart-total-val" id="cartCount">0 منتج</span>
+      </div>
+      <button class="checkout-btn" onclick="startCheckout()">متابعة الطلب ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-bg" id="checkoutModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📝 استمارة الطلب</h2>
+      <button class="close-btn" onclick="closeModal('checkoutModal')" style="font-size:1.4rem">×</button>
+    </div>
+    <div id="checkoutFormWrap">
+      <div class="checkout-summary">
+        <div class="checkout-summary-title">الخدمات المطلوبة:</div>
+        <div id="checkoutItems"></div>
+      </div>
+      <div class="form-group">
+        <label>الخانة 1 — اسمك الكامل</label>
+        <input type="text" id="f_name" placeholder="اكتب اسمك الكامل">
+        <div class="error-msg" id="err_name">⚠️ يرجى تعبئة هذه الخانة</div>
+      </div>
+      <div class="form-group">
+        <label>الخانة 2 — كيفية التواصل معك</label>
+        <input type="text" id="f_contact" placeholder="واتساب / ديسكورد / تيليغرام / البريد الإلكتروني">
+        <div class="error-msg" id="err_contact">⚠️ يرجى تعبئة هذه الخانة</div>
+      </div>
+      <div class="form-group">
+        <label>الخانة 3 — تفاصيل الموقع المطلوب</label>
+        <textarea id="f_details" placeholder="اشرح ما تريده بالتفصيل: الصفحات، الميزات، نوع المحتوى..."></textarea>
+        <div class="error-msg" id="err_details">⚠️ يرجى تعبئة هذه الخانة</div>
+      </div>
+      <div class="form-group">
+        <label>الخانة 4 — لون الموقع المفضل</label>
+        <input type="text" id="f_color" placeholder="مثال: أزرق وأبيض، داكن، ألوان محددة...">
+        <div class="error-msg" id="err_color">⚠️ يرجى تعبئة هذه الخانة</div>
+      </div>
+      <div class="form-group">
+        <label>الخانة 5 — الوقت المطلوب للتسليم</label>
+        <input type="text" id="f_time" placeholder="مثال: أسبوع، 3 أيام، شهر كامل...">
+        <div class="error-msg" id="err_time">⚠️ يرجى تعبئة هذه الخانة</div>
+      </div>
+      <button class="submit-btn" onclick="submitOrder()">📤 إرسال الطلب</button>
+      <button class="cancel-btn" onclick="closeModal('checkoutModal')">إلغاء</button>
+    </div>
+    <div class="success-box" id="checkoutSuccess" style="display:none">
+      <div class="success-icon">✅</div>
+      <h3>تم إرسال طلبك بنجاح!</h3>
+      <p>سيتواصل معك الفريق في أقرب وقت ممكن</p>
+      <button class="submit-btn" onclick="closeModal('checkoutModal');clearCart()" style="margin-top:1.5rem;max-width:200px;margin-left:auto;margin-right:auto;display:block">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== كلمة المرور ======
+const ADMIN_PASS = "KBAB1211";
+
+// ====== البيانات الافتراضية للمنتجات ======
+const DEFAULT_PRODUCTS = [
+  {id:1,name:"إنشاء موقع كامل",desc:"موقع ويب متكامل بجميع الصفحات والميزات الأساسية مع تصميم احترافي وكامل الوظائف",price:"500 ريال",icon:"🌐",badge:"الأكثر طلباً",badgeClass:"tag-hot",iconClass:"icon-blue",image:""},
+  {id:2,name:"إنشاء موقع خاص",desc:"موقع شخصي أو مؤسسي مخصص لاحتياجاتك الخاصة مع تصميم فريد وهوية بصرية مميزة",price:"350 ريال",icon:"🏠",badge:"مميز",badgeClass:"tag-best",iconClass:"icon-purple",image:""},
+  {id:3,name:"إنشاء موقع السيرفر",desc:"موقع مخصص لسيرفر Discord أو مجتمع إلكتروني مع نظام تسجيل وعرض المعلومات والقواعد",price:"250 ريال",icon:"🖥️",badge:"جديد",badgeClass:"tag-new",iconClass:"icon-teal",image:""},
+  {id:4,name:"إنشاء موقع متجر",desc:"متجر إلكتروني احترافي بالكامل مع سلة تسوق ونظام طلبات ولوحة تحكم متكاملة",price:"700 ريال",icon:"🛒",badge:"احترافي",badgeClass:"tag-pro",iconClass:"icon-green",image:""},
+  {id:5,name:"إنشاء صفحة قوانين السيرفر",desc:"صفحة قوانين وأنظمة احترافية لسيرفرك مع تصميم منظم وجميل وسهل القراءة",price:"150 ريال",icon:"📜",badge:"",badgeClass:"",iconClass:"icon-yellow",image:""},
+  {id:6,name:"خدمة مخصصة / أخرى",desc:"لديك فكرة أو مشروع مختلف؟ تواصل معنا وسنوفر لك الحل المناسب تماماً لاحتياجاتك",price:"حسب الطلب",icon:"✨",badge:"",badgeClass:"",iconClass:"icon-pink",image:""}
+];
+
+// ====== تحميل البيانات من localStorage ======
+function loadProducts() {
+  try {
+    const saved = localStorage.getItem('kbab_products');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); // نسخة من الافتراضية
+}
+
+function saveProducts() {
+  localStorage.setItem('kbab_products', JSON.stringify(products));
+}
+
+let products = loadProducts();
+let cart = [];
+let orders = JSON.parse(localStorage.getItem('kbab_orders') || '[]');
+let nextId = Math.max(...products.map(p => p.id), 6) + 1;
+let editImgData = "";
+let newImgData = "";
+
+function saveOrders() {
+  localStorage.setItem('kbab_orders', JSON.stringify(orders));
+}
+
+// ====== عرض المنتجات ======
+function renderProducts() {
+  const g = document.getElementById('productsGrid');
+  if(!g) return;
+  g.innerHTML = products.map(p => `
+    <div class="product-card">
+      ${p.image ? `<img class="prod-img" src="${p.image}" alt="${p.name}">` : ''}
+      <div class="prod-header">
+        <div class="prod-icon ${p.iconClass}">${p.icon}</div>
+        <div class="prod-meta">
+          ${p.badge ? `<span class="badge ${p.badgeClass}">${p.badge}</span>` : ''}
+          <div class="prod-name">${p.name}</div>
+        </div>
+      </div>
+      <div class="prod-body">
+        <div class="prod-desc">${p.desc}</div>
+      </div>
+      <div class="prod-footer">
+        <div class="prod-price">${p.price}</div>
+        <button class="add-cart-btn" id="btn_${p.id}" onclick="addToCart(${p.id})">
+          🛒 أضف للسلة
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function previewNewImage(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    newImgData = e.target.result;
+    const prev = document.getElementById('newProdImgPreview');
+    prev.src = newImgData;
+    prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewEditImage(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    editImgData = e.target.result;
+    const prev = document.getElementById('editProdImgPreview');
+    prev.src = editImgData;
+    prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  if(cart.find(x => x.id === id)) return;
+  cart.push({...p});
+  updateCartBadge();
+  renderCart();
+  const btn = document.getElementById('btn_' + id);
+  if(btn) {
+    btn.classList.add('added');
+    btn.textContent = '✅ تمت الإضافة';
+    setTimeout(() => {
+      btn.classList.remove('added');
+      btn.innerHTML = '🛒 أضف للسلة';
+    }, 2000);
+  }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartBadge();
+  renderCart();
+}
+
+function updateCartBadge() {
+  const b = document.getElementById('cartBadge');
+  if(b) b.textContent = cart.length;
+}
+
+function renderCart() {
+  const ci = document.getElementById('cartItems');
+  const cf = document.getElementById('cartFooter');
+  if(!ci) return;
+  if(cart.length === 0) {
+    ci.innerHTML = '<div class="empty-cart"><div class="empty-cart-icon">🛒</div><div>السلة فارغة حالياً</div></div>';
+    if(cf) cf.style.display = 'none';
+    return;
+  }
+  ci.innerHTML = cart.map(p => `
+    <div class="cart-item">
+      <div class="cart-item-icon ${p.iconClass}">${p.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">${p.price}</div>
+      </div>
+      <button class="remove-item" onclick="removeFromCart(${p.id})" title="حذف">🗑️</button>
+    </div>
+  `).join('');
+  if(cf) { cf.style.display = 'flex'; cf.style.flexDirection = 'column'; cf.style.gap = '10px'; }
+  const cc = document.getElementById('cartCount');
+  if(cc) cc.textContent = cart.length + ' منتج';
+}
+
+function clearCart() {
+  cart = [];
+  updateCartBadge();
+  renderCart();
+  renderProducts();
+}
+
+function toggleCart() {
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function closeCartOutside(e) {
+  if(e.target === document.getElementById('cartOverlay')) toggleCart();
+}
+
+function startCheckout() {
+  if(cart.length === 0) return;
+  toggleCart();
+  document.getElementById('checkoutItems').innerHTML = cart.map(p =>
+    `<div class="checkout-item-row">${p.icon} ${p.name} <span style="color:var(--blue);margin-right:auto">${p.price}</span></div>`
+  ).join('');
+  document.getElementById('checkoutFormWrap').style.display = 'block';
+  document.getElementById('checkoutSuccess').style.display = 'none';
+  ['name','contact','details','color','time'].forEach(f => {
+    document.getElementById('f_' + f).value = '';
+    document.getElementById('err_' + f).style.display = 'none';
+  });
+  document.getElementById('checkoutModal').classList.add('open');
+}
+
+function submitOrder() {
+  const fields = ['name','contact','details','color','time'];
+  let valid = true;
+  fields.forEach(f => {
+    const val = document.getElementById('f_' + f).value.trim();
+    const err = document.getElementById('err_' + f);
+    if(!val) { err.style.display = 'block'; valid = false; }
+    else { err.style.display = 'none'; }
+  });
+  if(!valid) return;
+
+  const order = {
+    id: Date.now(),
+    num: orders.length + 1,
+    name: document.getElementById('f_name').value.trim(),
+    contact: document.getElementById('f_contact').value.trim(),
+    details: document.getElementById('f_details').value.trim(),
+    color: document.getElementById('f_color').value.trim(),
+    time: document.getElementById('f_time').value.trim(),
+    products: cart.map(p => p.icon + ' ' + p.name).join(' ، '),
+    date: new Date().toLocaleString('ar-SA'),
+    status: 'جديد'
+  };
+
+  orders.push(order);
+  saveOrders();
+
+  document.getElementById('checkoutFormWrap').style.display = 'none';
+  document.getElementById('checkoutSuccess').style.display = 'block';
+
+  renderOrders();
+  updateAdminPanel();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function renderOrders() {
+  const el = document.getElementById('ordersListMain');
+  if(!el) return;
+  if(orders.length === 0) {
+    el.innerHTML = '<div class="empty-orders"><div class="empty-orders-icon">📭</div><div>لا توجد طلبات حتى الآن</div></div>';
+    return;
+  }
+  el.innerHTML = orders.map(o => `
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-id">طلب #${o.num} — ${o.name}</div>
+          <div class="order-date">${o.date}</div>
+        </div>
+        <span class="order-status">${o.status}</span>
+      </div>
+      <div class="order-grid">
+        <div class="order-field">
+          <div class="order-field-label">وسيلة التواصل</div>
+          <div class="order-field-val">${o.contact}</div>
+        </div>
+        <div class="order-field">
+          <div class="order-field-label">وقت التسليم</div>
+          <div class="order-field-val">${o.time}</div>
+        </div>
+        <div class="order-field">
+          <div class="order-field-label">لون الموقع</div>
+          <div class="order-field-val">${o.color}</div>
+        </div>
+        <div class="order-field">
+          <div class="order-field-label">التفاصيل</div>
+          <div class="order-field-val">${o.details.length > 60 ? o.details.substring(0,60)+'...' : o.details}</div>
+        </div>
+        <div class="order-field order-products">
+          <div class="order-field-label">الخدمات المطلوبة</div>
+          <div class="order-field-val">${o.products}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function checkAdmin() {
+  const p = document.getElementById('adminPassInput').value;
+  const err = document.getElementById('loginErr');
+  if(p === ADMIN_PASS) {
+    err.style.display = 'none';
+    document.getElementById('adminPassInput').value = '';
+    showPage('page-admin');
+    updateAdminPanel();
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+function updateAdminPanel() {
+  const sp = document.getElementById('statProds');
+  const so = document.getElementById('statOrders');
+  const sl = document.getElementById('statLast');
+  if(sp) sp.textContent = products.length;
+  if(so) so.textContent = orders.length;
+  if(sl) sl.textContent = orders.length > 0 ? orders[orders.length-1].name : '—';
+  renderAdminProducts();
+  renderAdminOrders();
+}
+
+function renderAdminProducts() {
+  const el = document.getElementById('adminProdsList');
+  if(!el) return;
+  el.innerHTML = products.map(p => `
+    <div class="prod-admin-row">
+      <div class="prod-admin-info">
+        <div class="prod-admin-name">${p.icon} ${p.name}</div>
+        <div class="prod-admin-price">${p.price}</div>
+      </div>
+      <div class="prod-admin-actions">
+        <button class="edit-btn" onclick="openEditProduct(${p.id})" title="تعديل">✏️</button>
+        <button class="del-btn" onclick="deleteProduct(${p.id})" title="حذف">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openEditProduct(id) {
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  document.getElementById('editProdId').value = id;
+  document.getElementById('editProdName').value = p.name;
+  document.getElementById('editProdPrice').value = p.price;
+  document.getElementById('editProdDesc').value = p.desc;
+  document.getElementById('editProdIcon').value = p.icon;
+  const sel = document.getElementById('editProdBadge');
+  sel.value = (p.badge && p.badgeClass) ? p.badge + '|' + p.badgeClass : '';
+  editImgData = p.image || '';
+  const prev = document.getElementById('editProdImgPreview');
+  if(p.image) { prev.src = p.image; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('editProdImgFile').value = '';
+  document.getElementById('editProdModal').classList.add('open');
+}
+
+function saveEditProduct() {
+  const id = parseInt(document.getElementById('editProdId').value);
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  const name = document.getElementById('editProdName').value.trim();
+  const price = document.getElementById('editProdPrice').value.trim();
+  if(!name || !price) { alert('يرجى إدخال الاسم والسعر'); return; }
+  const badgeFull = document.getElementById('editProdBadge').value;
+  const [badge, badgeClass] = badgeFull ? badgeFull.split('|') : ['',''];
+  p.name = name;
+  p.price = price;
+  p.desc = document.getElementById('editProdDesc').value.trim() || p.desc;
+  p.icon = document.getElementById('editProdIcon').value.trim() || p.icon;
+  p.badge = badge || '';
+  p.badgeClass = badgeClass || '';
+  if(editImgData) p.image = editImgData;
+
+  saveProducts(); // ✅ حفظ المنتجات بعد التعديل
+
+  closeModal('editProdModal');
+  renderProducts();
+  renderAdminProducts();
+  cart = cart.map(c => c.id === id ? {...p} : c);
+  renderCart();
+}
+
+function renderAdminOrders() {
+  const el = document.getElementById('adminOrdersList');
+  if(!el) return;
+  if(orders.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;padding:0.5rem 0">لا توجد طلبات بعد</div>';
+    return;
+  }
+  el.innerHTML = [...orders].reverse().map(o => `
+    <div class="admin-order-card">
+      <div class="admin-order-top">
+        <div style="flex:1">
+          <div class="admin-order-name">طلب #${o.num} — ${o.name}</div>
+          <div class="admin-order-meta">📱 ${o.contact}</div>
+          <div class="admin-order-meta">🛍️ ${o.products}</div>
+          <div class="admin-order-meta">🕒 ${o.date}</div>
+          <span class="admin-order-badge">${o.status}</span>
+        </div>
+        <button class="admin-del-order-btn" onclick="deleteOrder(${o.id})">🗑️ حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteOrder(id) {
+  if(!confirm('هل تريد حذف هذا الطلب نهائياً؟')) return;
+  orders = orders.filter(o => o.id !== id);
+  saveOrders();
+  renderAdminOrders();
+  renderOrders();
+  updateAdminPanel();
+}
+
+function deleteProduct(id) {
+  if(!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+  products = products.filter(p => p.id !== id);
+  cart = cart.filter(p => p.id !== id);
+  saveProducts(); // ✅ حفظ بعد الحذف
+  updateCartBadge();
+  renderCart();
+  renderProducts();
+  updateAdminPanel();
+}
+
+function addProduct() {
+  const name = document.getElementById('newProdName').value.trim();
+  const price = document.getElementById('newProdPrice').value.trim();
+  const desc = document.getElementById('newProdDesc').value.trim();
+  const icon = document.getElementById('newProdIcon').value.trim() || '📦';
+  const badgeFull = document.getElementById('newProdBadge').value;
+  if(!name || !price) { alert('يرجى إدخال اسم المنتج والسعر على الأقل'); return; }
+  const [badge, badgeClass] = badgeFull ? badgeFull.split('|') : ['',''];
+  products.push({
+    id: nextId++, name, price,
+    desc: desc || 'خدمة احترافية متكاملة',
+    icon, badge: badge||'', badgeClass: badgeClass||'',
+    iconClass: 'icon-blue',
+    image: newImgData || ''
+  });
+  document.getElementById('newProdName').value = '';
+  document.getElementById('newProdPrice').value = '';
+  document.getElementById('newProdDesc').value = '';
+  document.getElementById('newProdIcon').value = '';
+  document.getElementById('newProdImgFile').value = '';
+  document.getElementById('newProdImgPreview').style.display = 'none';
+  newImgData = '';
+  saveProducts(); // ✅ حفظ بعد الإضافة
+  renderProducts();
+  updateAdminPanel();
+}
+
+function showSection(sec, btn) {
+  document.getElementById('section-store').style.display = sec === 'store' ? 'block' : 'none';
+  document.getElementById('section-orders').style.display = sec === 'orders' ? 'block' : 'none';
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'));
+  if(btn) btn.classList.add('active-nav');
+  if(sec === 'orders') renderOrders();
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+renderProducts();
+renderCart();
+</script>
+</body>
+</html>
